@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Test</title>
+
+  </head>
+  <style>
+
+    .hide {
+      display: none;
+    }
+
+    .gallery {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      padding: 20px;
+    }
+  </style>
+  <body>
+
+    <div class="gallery">
+
+     <img
+        src="./Screenshot (1019).png"
+        height="200px"
+        width="200px"
+        alt="img1"
+      />
+
+     <img
+        src="./Screenshot (482).png"
+        height="200px"
+        width="200px"
+        alt="img2"
+      />
+
+      <img
+        src="./Screenshot (871).png"
+        height="200px"
+        width="200px"
+        alt="img3"
+      />
+
+      <img
+        src="./Screenshot (529).png"
+        height="200px"
+        width="200px"
+        alt="img4"
+      />
+
+    </div>
+
+    <form class="signup hide">
+      <fieldset>
+        <legend>SignUp Form</legend>
+        <label for="name">Name</label><br />
+        <input
+          type="text"
+          name="name"
+          id="name"
+          placeholder="Enter your Name"
+          required
+        />
+        <br /><br />
+        <label for="email">Email</label><br />
+        <input
+          type="email"
+          name="email"
+          id="email"
+          placeholder="Enter your Email"
+          required
+        />
+        <br /><br />
+        <label for="UserName">UserName</label><br />
+        <input
+          type="text"
+          name="UserName"
+          id="password"
+          placeholder="Enter your password"
+          required
+        />
+        <br /><br />
+        <input type="submit" />
+      </fieldset>
+      <p class="error"></p>
+    </form>
+
+    <div class="login hide">
+      <h1>User Details</h1>
+
+      <label for="loginName"> Name</label><br />
+      <h1 class="loginName"></h1>
+      <br /><br />
+      <label for="UserName "> UserName </label><br />
+      <h1 class="UserName"></h1>
+      <br /><br />
+    </div>
+
+     <div class="dice hide">
+
+       <img class="dice_img" height = "200px" width = "200px" src="./dice.png" alt="dice">
+       <p class = "random_number"></p>
+       <p class = "random_sum"></p>
+
+     </div>
+     <p class="dice_text"></p>
+      
+      <div class="img_box">
+
+      </div>  
+      <h1 class="msg"></h1>
+
+    <script>
+      let images = document.querySelectorAll("img");
+      let img1 = images[0];
+      let img2 = images[1];
+      let img3 = images[2];
+      let img4 = images[3];
+
+      img1.addEventListener("click", signup);
+      img1.style="cursor:pointer";
+
+      let form_signup = document.querySelector(".signup");
+
+      function signup() {
+        form_signup.classList.remove("hide");
+      }
+
+      let signup_form = document.querySelector(".signup");
+      let input_name = document.getElementById("name");
+      let input_email = document.getElementById("email");
+      let input_userName = document.getElementById("password");
+      signup_form.addEventListener("submit", validate);
+
+      let arr = [];
+      let id = 1;
+
+      function validate(e) {
+        e.preventDefault();
+        let name = input_name.value;
+        let email = input_email.value;
+        let userName = input_userName.value;
+
+        let error = document.querySelector(".error");
+
+        if (email.includes("@") == false) {
+          error.innerHTML = "Email must contain @";
+        } else {
+          error.innerHTML = "Form Submitted Successfully";
+
+          let obj = { id: id++, name, email, userName };
+          arr.push(obj);
+          input_name.value = "";
+          input_email.value = "";
+          input_userName.value = "";
+          // console.log(arr);
+          localStorage.setItem("data", JSON.stringify(arr));
+          img1.removeEventListener("click", signup);
+          img1.style="cursor:default";
+        }
+        img2.style="cursor:pointer";
+        img2.addEventListener("click", displayDetails);
+      }
+
+      let login_form = document.querySelector(".login");
+      let login_name = document.querySelector(".loginName");
+      let login_userName = document.querySelector(".UserName");
+      
+      
+      function displayDetails() {
+        let data = JSON.parse(localStorage.getItem("data"));
+        console.log("data",data);
+        form_signup.classList.add("hide");
+        login_form.classList.remove("hide");
+        login_name.innerHTML = data[0]?.name;
+        login_userName.innerHTML = data[0]?.userName;
+        img3.style="cursor:pointer";
+        img3.addEventListener('click',displayDice);
+        img2.style="cursor:default";
+        img2.removeEventListener("click", displayDetails);
+       
+      }
+      
+      let dice = document.querySelector(".dice");
+      
+      function displayDice(){
+         dice.classList.remove('hide');
+         login_form.classList.add("hide");
+         img3.style="cursor:default";
+         img3.removeEventListener("click", displayDice);
+      }
+
+      
+      let diceImg = document.querySelector(".dice_img")
+      let sum  = 0;
+      diceImg.addEventListener('click',play);
+      diceImg.style="cursor:pointer";
+      
+      let count = 0;
+
+      function displayDice1(){
+         dice.classList.remove('hide');
+         document.querySelector('.random_number').innerHTML = "random_number: " + 0;
+         document.querySelector('.random_sum').innerHTML = "sum: " + 0;
+         diceImg.addEventListener('click',playAgain);
+         diceImg.style="cursor:pointer";
+         img3.style="cursor:default";
+         img3.removeEventListener("click", displayDice1);
+      }
+
+      function play(){
+       
+        if(count===3){
+          diceImg.style="cursor:default";
+          diceImg.removeEventListener('click',play);
+          if(sum>=10){
+              img4.style="cursor:pointer";
+              img4.addEventListener('click',generateToken1);
+              alert("click on image 4")
+          }
+
+          if(sum< 10 && count>2){
+            img3.style="cursor:pointer";
+            sum = 0;
+            count = 0;
+            img3.addEventListener("click",displayDice1 );
+            dice.classList.add('hide');
+            alert("Click again on image 3 to try again")
+             
+          }
+
+        }else{
+        
+        let random = Math.floor(Math.random()*6 + 1) ;
+        let random_number = document.querySelector(".random_number");
+        random_number.innerHTML = "random_number: " + random;
+        sum+= random;
+        let random_sum = document.querySelector(".random_sum");
+        random_sum.innerHTML = "sum:" + sum;
+        
+      }
+      count++;
+      console.log(count)
+    }
+
+
+    function playAgain(){
+      if(sum>=10){
+          img4.style="cursor:pointer";
+          img4.addEventListener('click',generateToken1);
+          alert("click on image 4")
+         }
+      if(count===3){
+        diceImg.style="cursor:default";
+        diceImg.removeEventListener('click',playAgain);
+         if(sum<10){
+          badluck();
+         }
+      }else{
+        
+        let random = Math.floor(Math.random()*6 + 1) ;
+        let random_number = document.querySelector(".random_number");
+        random_number.innerHTML = "random_number: " + random;
+        sum+= random;
+        let random_sum = document.querySelector(".random_sum");
+        random_sum.innerHTML = "sum: "+sum;
+        
+      }
+      count++;
+
+        console.log(count)
+   }
+
+     function badluck(){
+      
+          let dice1 = document.querySelector('.dice')
+          dice1.classList.add("hide");
+
+        let msg = document.querySelector('.msg');
+        msg.innerHTML = "Bad Luck";
+
+     }
+
+     
+     function generateToken1(){
+        let capital_digit = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        let small_digit =   "abcdefghijklmnopqrstuvwxyz"
+        let  number =  '0123456789'
+        let special = '!@#$%^&*()_+'
+
+        let token = ""
+        let characters = capital_digit + small_digit + number + special
+        for(let i=0;i<12;i++){
+            let random = Math.floor(Math.random()*characters.length)
+            token  = token + characters[random]
+        }
+
+        console.log(token);
+           var img = document.createElement('img');
+           var token_digits = document.createElement('h1');
+           token_digits.innerHTML = token;
+            img.src ='https://th.bing.com/th?id=OIP.c2wvIFVmWsyCNzO3CDsy5gHaFL&w=298&h=209&c=8&rs=1&qlt=90&o=6&pid=3.1&rm=2'
+           document.querySelector('.img_box').appendChild(img);
+           document.querySelector('.img_box').appendChild(token_digits);
+           img4.style="cursor:default";
+          img4.removeEventListener('click',generateToken1);
+        
+
+        let dice1 = document.querySelector('.dice')
+          dice1.classList.add("hide");
+  
+      }
+
+
+    </script>
+  </body>
+</html>
